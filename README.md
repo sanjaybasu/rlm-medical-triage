@@ -1,8 +1,5 @@
 # rlm-medical-triage
 
-Code and data for: **"Recursive language model inference increases clinical hallucinations while chain-of-thought prompting reduces them: an ablation study of LLM medical triage across model scales"**
-
-Basu S, Patel S, Batniji R. *npj Digital Medicine* (under review, 2026).
 
 Pre-registration: https://osf.io/c69j4/
 IRB: WCG protocol #20253751
