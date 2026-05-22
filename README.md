@@ -125,6 +125,12 @@ Both metrics are computed via fuzzy string matching (`difflib.SequenceMatcher`, 
 
 ---
 
+## Revision scripts
+
+Scripts added during the major-revision cycle (frontier-API harness, Modal pipeline, M1/M3/M4/M5 mechanism experiments, source-grounding verifier, consistency linter, number-provenance audit) are in [`revision_v2/`](revision_v2/). See [`revision_v2/README.md`](revision_v2/README.md).
+
+---
+
 ## License
 
 Code: MIT. Data: see Data Availability above.
