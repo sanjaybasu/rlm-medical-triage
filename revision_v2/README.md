@@ -7,17 +7,19 @@ Scripts added during the major-revision cycle. Only code is included here; manus
 ```
 revision_v2/
   scripts/
-    frontier_repl_harness.py        # RLM REPL re-implementation for Anthropic / OpenAI / Google
-    modal_frontier_pipeline.py      # Modal orchestrator: Arms A/B/C/E + M2 (thinking off) + M5 (grounding stripped)
-    modal_m4_fresh.py               # M4: Qwen3-8B Arm C with a four-step chain-of-thought preamble (Modal)
-    m3_local_deepseek_thinking.py   # M3: DeepSeek-R1-70B Arm C with reasoning enabled (local Ollama, 32K-context variant)
-    analyze_m3.py                   # M3 output analyzer (JSON + ast.literal_eval parser, per-case PSR/sens/spec)
-    m1_phantom_stereotyping.py      # M1: phantom-symptom string-distribution concentration analysis
-    length_stratified_analysis.py   # PSR/CFS by patient-message length tertile
-    mitigation_pilot_verifier.py    # Post-execution source-grounding verifier (two-stage quote + symptom check)
-    comprehensive_consistency_check.py  # Cross-document numerical / citation / naming consistency linter
+    frontier_repl_harness.py             # RLM REPL re-implementation for Anthropic / OpenAI / Google
+    modal_frontier_pipeline.py           # Modal orchestrator: Arms A/B/C/E + M2 (thinking off) + M5 (grounding stripped) on the physician set
+    modal_realworld_n300.py              # Modal orchestrator: Arms A and C on a stratified N=300 subsample of the real-world set
+    modal_m4_fresh.py                    # M4: Qwen3-8B Arm C with a four-step chain-of-thought preamble (Modal)
+    m3_local_deepseek_thinking.py        # M3: DeepSeek-R1-70B Arm C with reasoning enabled (local Ollama, 32K-context variant)
+    analyze_m3.py                        # M3 output analyzer (JSON + ast.literal_eval parser, per-case PSR/sens/spec)
+    m1_phantom_stereotyping.py           # M1: phantom-symptom string-distribution concentration analysis
+    length_stratified_analysis.py        # PSR/CFS by patient-message length tertile
+    mitigation_pilot_verifier.py         # Post-execution source-grounding verifier (two-stage quote + symptom check)
+    comprehensive_consistency_check.py   # Cross-document numerical / citation / naming consistency linter
+    regenerate_figures_with_frontier.py  # Regenerate Figures 1, 3 and Supplementary Figures S1, S2, S3 with frontier models overlaid
   audit/
-    verify_numbers.py               # Re-derive registered claims from canonical sources, ±0.001 tolerance
+    verify_numbers.py                    # Re-derive registered claims from canonical sources, ±0.001 tolerance
 ```
 
 ### Provenance registry schema
@@ -31,7 +33,6 @@ location_in_manuscript, location_in_appendix
 
 One row per reportable number in the manuscript; the `derivation` field describes how to compute `reported_value` from `source_file`.
 
-
 ## Paths and environment variables
 
 The scripts resolve paths relative to the repository root by default. Override with:
@@ -43,6 +44,7 @@ The scripts resolve paths relative to the repository root by default. Override w
 | `RLM_REVISION_DIR`   | `<repo>/revision_v2`                               |
 | `RLM_PACKAGING_DIR`  | `<repo>`                                           |
 | `RLM_PHYSICIAN_DATA` | `<repo>/data/physician_full.json`                  |
+| `RLM_REALWORLD_DATA` | `<repo>/data/realworld_test.json`                  |
 
 ## API credentials
 
@@ -73,4 +75,12 @@ python revision_v2/scripts/m3_local_deepseek_thinking.py --pilot 5
 
 ## Resume semantics
 
-All long-running scripts (`modal_frontier_pipeline.py`, `modal_m4_fresh.py`, `m3_local_deepseek_thinking.py`) write per-case JSONL after each completion and skip case indices already present on relaunch.
+All long-running scripts (`modal_frontier_pipeline.py`, `modal_realworld_n300.py`, `modal_m4_fresh.py`, `m3_local_deepseek_thinking.py`) write per-case JSONL after each completion and skip case indices already present on relaunch.
+
+## Figure regeneration
+
+`regenerate_figures_with_frontier.py` reads:
+- Open-source metrics from `<RLM_PACKAGING_DIR>/output/metrics/all_metrics.csv`
+- Frontier metrics from `<RLM_REVISION_DIR>/frontier_runs/sup_table_1d_frontier_metrics.csv` (physician) and `realworld_n300_frontier_metrics.csv` (stratified real-world)
+
+It writes Figures 1, 3 and Supplementary Figures S1, S2, S3 (PNG and PDF) to `<RLM_REVISION_DIR>/figures/`. Figure 2 is left unchanged (open-source scaling analysis is open-source-specific).

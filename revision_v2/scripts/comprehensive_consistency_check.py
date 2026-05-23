@@ -1,11 +1,19 @@
-"""Cross-document consistency check.
+"""Comprehensive consistency check (per submit-prep Layer 1 + Layer 2 protocols).
 
-Verifies that numerical claims, citation references, naming conventions, and ID
-strings are consistent across the manuscript, appendix, and response letter.
-Re-derives selected numbers from canonical CSV/JSON sources where possible.
-
-Pass with --allow-tbd while TBD placeholders are still present; run without that
-flag for the final pre-submission check.
+Checks:
+  1. Every numeric claim in manuscript/appendix/response letter that matches a known
+     pattern can be re-derived from canonical source files (statistical_tests.csv,
+     all_metrics.csv, mitigation_pilot_qwen3_8b_summary.json, length_stratified_psr.csv).
+  2. Ref 19 is Moell et al. Front Artif Intell 2025 (not Schmidgall AgentClinic arXiv).
+  3. The Bonferroni denominator (32) is consistent across all three documents.
+  4. The two-family open-source naming is consistent.
+  5. The frontier model IDs (claude-opus-4-7, gpt-5.5, gemini-3.1-pro-preview) appear
+     consistently and are not mixed with older variants.
+  6. Mitigation pilot numbers in manuscript Results match the summary JSON.
+  7. Length-stratified numbers in manuscript Results match the CSV.
+  8. No "TBD-" placeholders remain in the clean manuscript (once frontier-run is done).
+  9. The release tag v1.1.0 is referenced in Data Availability.
+ 10. Cross-document: every Table reference exists; every Supp Table reference exists.
 
 Run from the revision_v2 directory:
     python scripts/comprehensive_consistency_check.py
@@ -14,10 +22,10 @@ from __future__ import annotations
 
 import csv
 import json
-import os
 import re
 import statistics
 import sys
+import os
 from pathlib import Path
 
 
